@@ -8,11 +8,20 @@ public class SearchReplaceStringFunction implements StringFunction {
 	private final String search;
 	private final String replace;
 	
+	/**
+	 * Constructor.
+	 * 
+	 * @param search The String to search for. It is not a regex. Cannot be null.
+	 * @param replace
+	 */
 	public SearchReplaceStringFunction(final String search, final String replace) {
 		this.search = search;
 		this.replace = replace;
 	}
 	
+	/**
+	 * Does a search/replace using String.replace().
+	 */
 	@Override
 	public String apply(final String input) {
 		return input.replace(search, replace);

@@ -2,17 +2,18 @@ package jcrawl.crawl;
 
 import jcrawl.ChainOfResponsibility;
 import jcrawl.Regexes;
+import jcrawl.Utils;
 import jcrawl.handler.DiscardHandler;
 import jcrawl.handler.DuplicateHandler;
 import jcrawl.handler.Handler;
 import jcrawl.handler.HtmlHandler;
-import jcrawl.handler.KeepHandler;
 import jcrawl.handler.PrintHandler;
 import jcrawl.handler.StringFunctionHandler;
 import jcrawl.handler.document.SelectHref;
 import jcrawl.queue.PriorityQueue;
 import jcrawl.queue.Queue;
 import jcrawl.queue.RegexComparator;
+import jcrawl.stringfunction.ExtractStringFunction;
 import jcrawl.stringfunction.LowerCaseHttpStringFunction;
 import jcrawl.stringfunction.SearchReplaceStringFunction;
 import jcrawl.stringfunction.SubstringStringFunction;
@@ -25,32 +26,31 @@ import com.google.common.collect.Iterators;
  */
 public class CrawlBootieMashup {
 
+	private static final String[] REGEXS_PRINT = new String[] {Regexes.MP3, Regexes.PDF, Regexes.ZIP};
+
 	public static void main(String[] args) throws Exception {
 		final Handler[] handlers = new Handler[] {
 				new StringFunctionHandler(new TrimStringFunction()),
 				new StringFunctionHandler(new LowerCaseHttpStringFunction()),
 				new StringFunctionHandler(new SearchReplaceStringFunction(" ", "+")),
 				new StringFunctionHandler(new SubstringStringFunction("#")),
+				new StringFunctionHandler(new SubstringStringFunction("?")),
+				new StringFunctionHandler(new ExtractStringFunction("(.+)/feed")),	// The /feed part of the link is superfluous.
 				
-				new DiscardHandler(".+/feed"),				// Discard links which end with /feed because they are useless duplicates of good links.
 				new DiscardHandler(".+BlogBacklinkURL.+"),	// Discard these links because they are broken.
 				new DiscardHandler(Regexes.GIF),
 				new DiscardHandler(Regexes.JPG),
 				new DiscardHandler(Regexes.PNG),
-				new DiscardHandler(Regexes.XML),
+				new DiscardHandler(Regexes.XML),	// Discard these links because they are mostly rss or atom documents.
 				
 				new DuplicateHandler(),
 				
-				new PrintHandler(Regexes.MP3),
-				new PrintHandler(Regexes.PDF),
-				new PrintHandler(Regexes.ZIP),
+				new PrintHandler(REGEXS_PRINT),
 				
-				new KeepHandler("http://bootiemashup.com/blog.*|http://bootiemashup.com/bestof.*"),
-				
-				new HtmlHandler(".+", new SelectHref()),
+				new HtmlHandler(Utils.orRegexes("http://bootiemashup.com/blog.*", "http://bootiemashup.com/bestof.*"), new SelectHref()),
 		};
 		
-		final Queue queue = new PriorityQueue(new RegexComparator(new String[] {Regexes.MP3, Regexes.ZIP}));
+		final Queue queue = new PriorityQueue(new RegexComparator(REGEXS_PRINT));
 		queue.add(Iterators.forArray(new String[] {"http://bootiemashup.com/blog", "http://bootiemashup.com/bestof"}));
 		
 		final ChainOfResponsibility chain = new ChainOfResponsibility(handlers, queue);

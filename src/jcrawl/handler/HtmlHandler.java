@@ -1,45 +1,42 @@
 package jcrawl.handler;
 
-import jcrawl.AbstractRegex;
-import jcrawl.Utils;
-import jcrawl.handler.document.SelectFromDocumentStrategy;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import jcrawl.AbstractRegex;
+import jcrawl.Utils;
+import jcrawl.handler.document.SelectFromDocumentStrategy;
+
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
+
+import com.google.common.collect.Iterators;
 
 /**
  * This Class fetches urls and uses a Strategy to extract urls from them.
  */
 public class HtmlHandler extends AbstractRegex implements Handler {
 	
-	private final SelectFromDocumentStrategy strategy;
+	private final SelectFromDocumentStrategy[] strategies;
 	
-	public HtmlHandler(final String regex, final SelectFromDocumentStrategy strategy) {
+	public HtmlHandler(final String regex, final SelectFromDocumentStrategy... strategies) {
 		super(regex);
-		this.strategy = strategy;
+		this.strategies = strategies;
 	}
 	
-	private SelectFromDocumentStrategy getStrategy() {
-		return strategy;
+	private SelectFromDocumentStrategy[] getStrategy() {
+		return strategies;
 	}
 
 	@Override
 	public Iterator<String> handle(final String url) {
 		if (getMatcher(url).matches()) {
+			final List<Iterator<String>> iterators = new ArrayList<Iterator<String>>();
 			final Document document = Utils.fetchAsDocument(url);
-			final Elements hrefs = getStrategy().getElements(document);
-			final List<String> urls = new ArrayList<String>();
-
-			for (final Element element : hrefs) {
-				final String href = getStrategy().getHref(element);
-				urls.add(href);
+			for (final SelectFromDocumentStrategy s : getStrategy()) {
+				iterators.add(s.getUrls(document));
 			}
-			return urls.iterator();
+			return Iterators.concat(iterators.iterator());
 		}
 		else {
 			return null;

@@ -5,6 +5,9 @@ package jcrawl;
  */
 public class Regexes {
 	
+	/** Matches any non-empty string. */
+	public static final String ANY = ".+";
+	
 	public static final String GIF = ".+\\.[gG][iI][fF]";
 	
 	public static final String HTML = ".+\\.[hH][tT][mM][lL]?";

@@ -1,6 +1,7 @@
 package jcrawl.handler;
 
 import jcrawl.AbstractRegex;
+import jcrawl.Utils;
 
 import java.util.Iterator;
 
@@ -11,8 +12,8 @@ import com.google.common.collect.Iterators;
  */
 public class PrintHandler extends AbstractRegex implements Handler {
 	
-	public PrintHandler(final String regex) {
-		super(regex);
+	public PrintHandler(final String... regexes) {
+		super(Utils.orRegexes(regexes));
 	}
 	
 	@Override

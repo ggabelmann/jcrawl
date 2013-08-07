@@ -1,23 +1,27 @@
 package jcrawl.handler.document;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 /**
- * This Class selects "img src" from Documents.
+ * This Class extracts "img src" urls from Documents.
  */
 public class SelectSrc implements SelectFromDocumentStrategy {
 	
 	@Override
-	public Elements getElements(final Document document) {
-		return document.select("img[src]");
-	}
+	public Iterator<String> getUrls(final Document document) {
+		final List<String> urls = new ArrayList<String>();
+		final Elements hrefs = document.select("img[src]");
 
-	@Override
-	public String getHref(final Element element) {
-		return element.attr("abs:src");
+		for (final Element element : hrefs) {
+			urls.add(element.attr("abs:src"));
+		}
+		return urls.iterator();
 	}
 	
 }
-

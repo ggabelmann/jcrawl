@@ -11,6 +11,16 @@ import org.jsoup.nodes.Document;
  */
 public class Utils {
 	
+	public static String orRegexes(final String... regexes) {
+		final StringBuffer sb = new StringBuffer();
+		for (int i = 0; i < regexes.length - 1; i++) {
+			sb.append(regexes[i]);
+			sb.append("|");
+		}
+		sb.append(regexes[regexes.length - 1]);
+		return sb.toString();
+	}
+	
 	public static String pad(final int number, final int length) {
 		return pad(Integer.toString(number), length);
 	}

@@ -39,6 +39,7 @@ public class ChainOfResponsibility {
 		int count = 1;
 		
 		for (; url != null; count++) {
+//			System.out.println("# " + url);
 			try {
 				Iterator<String> handled = null;
 				for (final Handler handler : handlers) {
