@@ -14,7 +14,7 @@ public class RegexComparator implements Comparator<String> {
 	
 	private final Pattern[] patterns;
 	
-	public RegexComparator(final String[] regexs) {
+	public RegexComparator(final String... regexs) {
 		this.patterns = new Pattern[regexs.length];
 		for (int i = 0; i < regexs.length; i++) {
 			this.patterns[i] = Pattern.compile(regexs[i]);

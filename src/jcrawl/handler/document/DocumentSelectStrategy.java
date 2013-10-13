@@ -7,7 +7,7 @@ import org.jsoup.nodes.Document;
 /**
  * This interface is a Strategy that allows Classes to create urls from Documents.
  */
-public interface SelectFromDocumentStrategy {
+public interface DocumentSelectStrategy {
 	
 	/**
 	 * @param document Cannot be null.

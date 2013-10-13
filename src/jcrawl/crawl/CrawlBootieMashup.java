@@ -9,7 +9,7 @@ import jcrawl.handler.Handler;
 import jcrawl.handler.HtmlHandler;
 import jcrawl.handler.PrintHandler;
 import jcrawl.handler.StringFunctionHandler;
-import jcrawl.handler.document.SelectHref;
+import jcrawl.handler.document.Select;
 import jcrawl.queue.PriorityQueue;
 import jcrawl.queue.Queue;
 import jcrawl.queue.RegexComparator;
@@ -47,7 +47,7 @@ public class CrawlBootieMashup {
 				
 				new PrintHandler(REGEXS_PRINT),
 				
-				new HtmlHandler(Utils.orRegexes("http://bootiemashup.com/blog.*", "http://bootiemashup.com/bestof.*"), new SelectHref()),
+				new HtmlHandler(Utils.orRegexes("http://bootiemashup.com/blog.*", "http://bootiemashup.com/bestof.*"), new Select("a", "href")),
 		};
 		
 		final Queue queue = new PriorityQueue(new RegexComparator(REGEXS_PRINT));

@@ -55,7 +55,9 @@ public class ChainOfResponsibility {
 				}
 			}
 			catch (final Exception ex1) {
-				System.out.println("# " + ex1);
+				for (final StackTraceElement ste : ex1.getStackTrace()) {
+					System.out.println("# " + ste);
+				}
 			}
 			
 			if (count == 2500) {
