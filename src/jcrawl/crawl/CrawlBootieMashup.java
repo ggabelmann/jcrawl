@@ -10,6 +10,7 @@ import jcrawl.handler.HtmlHandler;
 import jcrawl.handler.PrintHandler;
 import jcrawl.handler.StringFunctionHandler;
 import jcrawl.handler.document.Select;
+import jcrawl.queue.ChainedComparator;
 import jcrawl.queue.PriorityQueue;
 import jcrawl.queue.Queue;
 import jcrawl.queue.RegexComparator;
@@ -35,7 +36,7 @@ public class CrawlBootieMashup {
 				new StringFunctionHandler(new SearchReplaceStringFunction(" ", "+")),
 				new StringFunctionHandler(new SubstringStringFunction("#")),
 				new StringFunctionHandler(new SubstringStringFunction("?")),
-				new StringFunctionHandler(new ExtractStringFunction("(.+)/feed")),	// The /feed part of the link is superfluous.
+				new StringFunctionHandler(new ExtractStringFunction("(.+)/feed.*")),	// The /feed part of the link is superfluous.
 				
 				new DiscardHandler(".+BlogBacklinkURL.+"),	// Discard these links because they are broken.
 				new DiscardHandler(Regexes.GIF),
@@ -50,7 +51,11 @@ public class CrawlBootieMashup {
 				new HtmlHandler(Utils.orRegexes("http://bootiemashup.com/blog.*", "http://bootiemashup.com/bestof.*"), new Select("a", "href")),
 		};
 		
-		final Queue queue = new PriorityQueue(new RegexComparator(REGEXS_PRINT));
+		final Queue queue = new PriorityQueue(
+		   new ChainedComparator<String>(
+		      new RegexComparator(REGEXS_PRINT[2]),
+		      new RegexComparator(REGEXS_PRINT[0]),
+		      new RegexComparator(REGEXS_PRINT[1])));
 		queue.add(Iterators.forArray(new String[] {"http://bootiemashup.com/blog", "http://bootiemashup.com/bestof"}));
 		
 		final ChainOfResponsibility chain = new ChainOfResponsibility(handlers, queue);

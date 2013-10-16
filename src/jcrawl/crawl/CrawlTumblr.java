@@ -9,6 +9,8 @@ import jcrawl.handler.KeepHandler;
 import jcrawl.handler.PrintHandler;
 import jcrawl.handler.StringFunctionHandler;
 import jcrawl.handler.document.Select;
+import jcrawl.queue.ChainedComparator;
+import jcrawl.queue.HashcodeComparator;
 import jcrawl.queue.PriorityQueue;
 import jcrawl.queue.Queue;
 import jcrawl.queue.RegexComparator;
@@ -44,7 +46,7 @@ public class CrawlTumblr {
             new KeepHandler(".+media.tumblr.com.+", url + ".+"),
             
             new StringFunctionHandler(new SearchReplaceStringFunction("/post/", "/image/")),
-            new StringFunctionHandler(new ExtractStringFunction("(.+/image/\\d+)/.+")), // Remove unnecessary SEO words from image link.
+            new StringFunctionHandler(new ExtractStringFunction("(.+/image/\\d+)/.+")), // Remove unnecessary SEO words from end of image link.
             
 				new DuplicateHandler(),
 				
@@ -54,7 +56,13 @@ public class CrawlTumblr {
             new HtmlHandler(url + "/image/\\d+", new Select("img", "data-src")),
 		};
 		
-		final Queue queue = new PriorityQueue(new RegexComparator(Regexes.JPG));
+      final Queue queue = new PriorityQueue(
+            new ChainedComparator<String>(
+                  new RegexComparator(Regexes.JPG),
+                  new RegexComparator(".+/image/.+"),
+                  new RegexComparator(".+/post/.+"),
+                  new HashcodeComparator()
+                  ));
       queue.add(Iterators.forArray(new String[] {url + "/page/1"}));
 		
 		final ChainOfResponsibility chain = new ChainOfResponsibility(handlers, queue);
