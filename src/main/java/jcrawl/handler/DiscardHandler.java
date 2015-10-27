@@ -1,10 +1,8 @@
 package jcrawl.handler;
 
 import jcrawl.AbstractRegex;
-
-import java.util.Iterator;
-
-import com.google.common.collect.Iterators;
+import java.util.Collections;
+import java.util.Optional;
 
 /**
  * This Class discards urls which match a regex.
@@ -33,15 +31,15 @@ public class DiscardHandler extends AbstractRegex implements Handler {
 	}
 
 	@Override
-	public Iterator<String> handle(final String url) {
+	public Optional<Iterable<String>> handle(final String url) {
 		if (getMatcher(url).matches()) {
 			if (isPrint()) {
 				System.out.println("# DiscardHandler: " + url);
 			}
-			return Iterators.emptyIterator();
+			return Optional.of(Collections.emptyList());
 		}
 		else {
-			return null;
+			return Optional.empty();
 		}
 	}
 }

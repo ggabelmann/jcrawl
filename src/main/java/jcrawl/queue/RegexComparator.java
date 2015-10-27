@@ -35,8 +35,9 @@ public class RegexComparator implements Comparator<String> {
       final Matcher matcher1 = pattern.matcher(url1);
       boolean url1Matches = matcher1.matches();
       
-      if (url0Matches && url1Matches) return 0;
-      if (url0Matches == false && url1Matches == false) return 0;
+      if ((url0Matches && url1Matches) || (url0Matches == false && url1Matches == false)) {
+			return url0.compareTo(url1);
+		}
       if (url0Matches) return -1;
       return 1;
    }

@@ -1,9 +1,11 @@
 package jcrawl.stringfunction;
 
+import java.util.function.UnaryOperator;
+
 /**
  * This Class does a simple search and replace on an url.
  */
-public class SearchReplaceStringFunction implements StringFunction {
+public class SearchReplaceStringFunction implements UnaryOperator<String> {
 
 	private final String search;
 	private final String replace;

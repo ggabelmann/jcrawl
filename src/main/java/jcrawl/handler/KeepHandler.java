@@ -2,10 +2,8 @@ package jcrawl.handler;
 
 import jcrawl.AbstractRegex;
 import jcrawl.Utils;
-
-import java.util.Iterator;
-
-import com.google.common.collect.Iterators;
+import java.util.Collections;
+import java.util.Optional;
 
 /**
  * This Class keeps urls which match a regex.
@@ -17,13 +15,13 @@ public class KeepHandler extends AbstractRegex implements Handler {
 	}
 	
 	@Override
-	public Iterator<String> handle(final String url) {
+	public Optional<Iterable<String>> handle(final String url) {
 		if (getMatcher(url).matches()) {
-			return null;
+			return Optional.empty();
 		}
 		else {
 			// System.out.println("# KeepHandler: " + url);
-			return Iterators.emptyIterator();
+			return Optional.of(Collections.emptyList());
 		}
 	}
 	

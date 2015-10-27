@@ -1,12 +1,12 @@
 package jcrawl.stringfunction;
 
+import java.util.function.UnaryOperator;
 import jcrawl.AbstractRegex;
-import jcrawl.stringfunction.StringFunction;
 
 /**
  * ?
  */
-public class LowerCaseHttpStringFunction extends AbstractRegex implements StringFunction {
+public class LowerCaseHttpStringFunction extends AbstractRegex implements UnaryOperator<String> {
 	
 	public LowerCaseHttpStringFunction() {
 		super("http://.*");

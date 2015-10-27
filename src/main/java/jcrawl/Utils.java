@@ -1,5 +1,6 @@
 package jcrawl;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -53,7 +54,7 @@ public class Utils {
 			System.out.println("# Fetching " + url);
 			return Jsoup.connect(url).timeout(1000 * 30).userAgent("Mozilla/5.0 (Windows NT 6.1; WOW64; rv:15.0) Gecko/20100101 Firefox/15.0.1").get();
 		}
-		catch (final Exception ex1) {
+		catch (final InterruptedException | IOException ex1) {
 			throw new RuntimeException(ex1);
 		}
 	}

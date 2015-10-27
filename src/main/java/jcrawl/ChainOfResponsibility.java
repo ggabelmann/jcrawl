@@ -1,6 +1,7 @@
 package jcrawl;
 
 import java.util.Iterator;
+import java.util.Optional;
 
 import jcrawl.handler.Handler;
 import jcrawl.queue.Queue;
@@ -39,18 +40,18 @@ public class ChainOfResponsibility {
 		int count = 1;
 		
 		for (; url != null; count++) {
-//			System.out.println("# " + url);
+//			System.out.println("# find handler for url: " + url);
 			try {
-				Iterator<String> handled = null;
+				Optional<Iterable<String>> handled = null;
 				for (final Handler handler : handlers) {
 					handled = handler.handle(url);
-					if (handled != null) {
-						getQueue().add(handled);
+					if (handled.isPresent()) {
+						getQueue().add(handled.get());
 						break;
 					}
 				}
 				
-				if (handled == null) {
+				if (handled.isPresent() == false) {
 					System.out.println("# No handler for: " + url);
 				}
 			}

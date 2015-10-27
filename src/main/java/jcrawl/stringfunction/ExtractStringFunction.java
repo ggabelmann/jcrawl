@@ -1,13 +1,13 @@
 package jcrawl.stringfunction;
 
+import java.util.function.UnaryOperator;
 import java.util.regex.Matcher;
-
 import jcrawl.AbstractRegex;
 
 /**
  * This Class uses a regex to extract parts of Strings and then piece them back together.
  */
-public class ExtractStringFunction extends AbstractRegex implements StringFunction {
+public class ExtractStringFunction extends AbstractRegex implements UnaryOperator<String> {
 	
 	public ExtractStringFunction(final String regex) {
 		super(regex);
@@ -21,7 +21,7 @@ public class ExtractStringFunction extends AbstractRegex implements StringFuncti
 	public String apply(final String input) {
 		final Matcher matcher = getMatcher(input);
 		
-		if (matcher.matches() && matcher.groupCount() >= 1) {
+		if (matcher.matches() && matcher.groupCount() > 0) {
 			final StringBuilder sb = new StringBuilder();
 			for (int i = 1; i <= matcher.groupCount(); i++) {
 				sb.append(matcher.group(i)); 

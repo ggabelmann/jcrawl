@@ -1,7 +1,5 @@
 package jcrawl.handler.document;
 
-import java.util.Iterator;
-
 import org.jsoup.nodes.Document;
 
 /**
@@ -11,8 +9,8 @@ public interface DocumentSelectStrategy {
 	
 	/**
 	 * @param document Cannot be null.
-	 * @return An Iterator for urls. Will not be null.
+	 * @return An Iterable for urls. Will not be null.
 	 */
-	public Iterator<String> getUrls(final Document document);
+	public Iterable<String> getUrls(final Document document);
 	
 }

@@ -1,10 +1,11 @@
 package jcrawl.crawl;
 
+import java.util.Arrays;
 import jcrawl.ChainOfResponsibility;
 import jcrawl.Regexes;
 import jcrawl.Utils;
+import jcrawl.handler.DiscardDuplicatesHandler;
 import jcrawl.handler.DiscardHandler;
-import jcrawl.handler.DuplicateHandler;
 import jcrawl.handler.Handler;
 import jcrawl.handler.HtmlHandler;
 import jcrawl.handler.PrintHandler;
@@ -14,49 +15,55 @@ import jcrawl.queue.ChainedComparator;
 import jcrawl.queue.PriorityQueue;
 import jcrawl.queue.Queue;
 import jcrawl.queue.RegexComparator;
+import jcrawl.stringfunction.EncodeSpacesStringFunction;
 import jcrawl.stringfunction.ExtractStringFunction;
 import jcrawl.stringfunction.LowerCaseHttpStringFunction;
-import jcrawl.stringfunction.SearchReplaceStringFunction;
 import jcrawl.stringfunction.SubstringStringFunction;
 import jcrawl.stringfunction.TrimStringFunction;
-
-import com.google.common.collect.Iterators;
 
 /**
  * Crawl the bootiemashup.com site and print out links to mp3s, pdfs, and zips.
  */
 public class CrawlBootieMashup {
 
-	private static final String[] REGEXS_PRINT = new String[] {Regexes.MP3, Regexes.PDF, Regexes.ZIP};
-
+	private static final String[] PRINT_REGEXES =
+		new String[] {
+			Regexes.MP3,
+			Regexes.PDF,
+			Regexes.ZIP};
+	
+	private static final String[] DISCARD_REGEXES =
+		new String[] {
+			".+BlogBacklinkURL.+",	// Discard these links because they are broken.
+			Regexes.GIF,
+			Regexes.JPG,
+			Regexes.PNG,
+			Regexes.XML};	// Discard these links because they are mostly rss or atom documents.
+	
 	public static void main(String[] args) throws Exception {
 		final Handler[] handlers = new Handler[] {
-				new StringFunctionHandler(new TrimStringFunction()),
-				new StringFunctionHandler(new LowerCaseHttpStringFunction()),
-				new StringFunctionHandler(new SearchReplaceStringFunction(" ", "+")),
-				new StringFunctionHandler(new SubstringStringFunction("#")),
-				new StringFunctionHandler(new SubstringStringFunction("?")),
+				new StringFunctionHandler(
+					new TrimStringFunction(),
+					new LowerCaseHttpStringFunction(),
+					new SubstringStringFunction("#"),
+					new SubstringStringFunction("?"),
+					new EncodeSpacesStringFunction()),
+				
 				new StringFunctionHandler(new ExtractStringFunction("(.+)/feed.*")),	// The /feed part of the link is superfluous.
 				
-				new DiscardHandler(".+BlogBacklinkURL.+"),	// Discard these links because they are broken.
-				new DiscardHandler(Regexes.GIF),
-				new DiscardHandler(Regexes.JPG),
-				new DiscardHandler(Regexes.PNG),
-				new DiscardHandler(Regexes.XML),	// Discard these links because they are mostly rss or atom documents.
+				new DiscardHandler(Utils.orRegexes(DISCARD_REGEXES), true),
+				new DiscardDuplicatesHandler(),
 				
-				new DuplicateHandler(),
-				
-				new PrintHandler(REGEXS_PRINT),
-				
-				new HtmlHandler(Utils.orRegexes("http://bootiemashup.com/blog.*", "http://bootiemashup.com/bestof.*"), new Select("a", "href")),
+				new PrintHandler(PRINT_REGEXES),
+				new HtmlHandler(Utils.orRegexes("http://bootiemashup.com.*"), new Select("a", "href"))
 		};
 		
 		final Queue queue = new PriorityQueue(
-		   new ChainedComparator<String>(
-		      new RegexComparator(REGEXS_PRINT[2]),
-		      new RegexComparator(REGEXS_PRINT[0]),
-		      new RegexComparator(REGEXS_PRINT[1])));
-		queue.add(Iterators.forArray(new String[] {"http://bootiemashup.com/blog", "http://bootiemashup.com/bestof"}));
+		   new ChainedComparator<>(
+		      new RegexComparator(PRINT_REGEXES[2]),
+		      new RegexComparator(PRINT_REGEXES[0]),
+		      new RegexComparator(PRINT_REGEXES[1])));
+		queue.add(Arrays.asList("http://bootiemashup.com/blog", "http://bootiemashup.com/bestof"));
 		
 		final ChainOfResponsibility chain = new ChainOfResponsibility(handlers, queue);
 		chain.start();

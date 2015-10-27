@@ -1,11 +1,12 @@
 package jcrawl.stringfunction;
 
+import java.util.function.UnaryOperator;
 import jcrawl.AbstractRegex;
 
 /**
  * ?
  */
-public class SubstringStringFunction extends AbstractRegex implements StringFunction {
+public class SubstringStringFunction extends AbstractRegex implements UnaryOperator<String> {
 	
 	private final String substring;
 	

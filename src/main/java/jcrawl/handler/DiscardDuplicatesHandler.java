@@ -1,23 +1,21 @@
 package jcrawl.handler;
 
 import jcrawl.stringfunction.CopyStringFunction;
-import jcrawl.stringfunction.StringFunction;
-
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
-
-import com.google.common.collect.Iterators;
+import java.util.Collections;
+import java.util.Optional;
+import java.util.function.Function;
 
 /**
  * This Class can prevent infinite loops by adding urls to an internal Set.
  */
-public class DuplicateHandler implements Handler {
+public class DiscardDuplicatesHandler implements Handler {
 	
-	private StringFunction function;
+	private Function<String, String> function;
 	private Set<String> visited;
 
-	public DuplicateHandler() {
+	public DiscardDuplicatesHandler() {
 		this(new CopyStringFunction());
 	}
 	
@@ -26,13 +24,9 @@ public class DuplicateHandler implements Handler {
 	 * 
 	 * @param f This StringFunction is called on the url before its internal Set is checked. Cannot be null.
 	 */
-	public DuplicateHandler(final StringFunction f) {
+	public DiscardDuplicatesHandler(final Function<String, String> f) {
 		this.function = f;
-		this.visited = new HashSet<String>();
-	}
-
-	private StringFunction getFunction() {
-		return function;
+		this.visited = new HashSet<>();
 	}
 
 	private Set<String> getVisited() {
@@ -44,16 +38,16 @@ public class DuplicateHandler implements Handler {
 	 * Otherwise an empty Iterator is returned.
 	 */
 	@Override
-	public Iterator<String> handle(final String url) {
-		final String transformed = getFunction().apply(url);
+	public Optional<Iterable<String>> handle(final String url) {
+		final String transformed = function.apply(url);
 
 		if (getVisited().contains(transformed)) {
 			// System.out.println("# DuplicateHandler: " + matched);
-			return Iterators.emptyIterator();
+			return Optional.of(Collections.emptyList());
 		}
 		else {
 			getVisited().add(transformed);
-			return null;
+			return Optional.empty();
 		}
 	}
 

@@ -14,14 +14,15 @@ public class PriorityQueue implements Queue {
    private final NavigableSet<String> queue;
    
    public PriorityQueue(final Comparator<String> comparator) {
-      this.queue = new TreeSet<String>(comparator);
+      this.queue = new TreeSet<>(comparator);
    }
    
    @Override
-   public void add(final Iterator<String> urls) {
-      for (; urls.hasNext(); ) {
-         queue.add(urls.next());
-      }
+   public void add(final Iterable<String> urls) {
+		for (final String url : urls) {
+			final boolean result = queue.add(url);
+//			System.out.println("# " + url);
+		}
    }
    
    @Override

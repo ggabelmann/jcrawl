@@ -2,7 +2,7 @@ package jcrawl.crawl;
 
 import jcrawl.ChainOfResponsibility;
 import jcrawl.Regexes;
-import jcrawl.handler.DuplicateHandler;
+import jcrawl.handler.DiscardDuplicatesHandler;
 import jcrawl.handler.Handler;
 import jcrawl.handler.HtmlHandler;
 import jcrawl.handler.KeepHandler;
@@ -19,8 +19,7 @@ import jcrawl.stringfunction.LowerCaseHttpStringFunction;
 import jcrawl.stringfunction.SearchReplaceStringFunction;
 import jcrawl.stringfunction.SubstringStringFunction;
 import jcrawl.stringfunction.TrimStringFunction;
-
-import com.google.common.collect.Iterators;
+import java.util.Arrays;
 
 /**
  * Crawl a specific blog on tumblr.com and print out links to jpgs.
@@ -48,7 +47,7 @@ public class CrawlTumblr {
             new StringFunctionHandler(new SearchReplaceStringFunction("/post/", "/image/")),
             new StringFunctionHandler(new ExtractStringFunction("(.+/image/\\d+)/.+")), // Remove unnecessary SEO words from end of image link.
             
-				new DuplicateHandler(),
+				new DiscardDuplicatesHandler(),
 				
 				new PrintHandler(Regexes.JPG),
 				
@@ -63,7 +62,7 @@ public class CrawlTumblr {
                   new RegexComparator(".+/post/.+"),
                   new HashcodeComparator()
                   ));
-      queue.add(Iterators.forArray(new String[] {url + "/page/1"}));
+      queue.add(Arrays.asList(url + "/page/1"));
 		
 		final ChainOfResponsibility chain = new ChainOfResponsibility(handlers, queue);
 		chain.start();
