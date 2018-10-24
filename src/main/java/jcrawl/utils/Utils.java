@@ -1,4 +1,4 @@
-package jcrawl;
+package jcrawl.utils;
 
 import java.io.IOException;
 import java.net.MalformedURLException;

@@ -1,4 +1,4 @@
-package jcrawl;
+package jcrawl.utils;
 
 /**
  * This Class has predefined regexes.
@@ -15,9 +15,13 @@ public class Regexes {
 	public static final String HTML = ".+\\.[hH][tT][mM][lL]?";
 	
 	public static final String JPG = ".+\\.[jJ][pP][eE]?[gG]";
-	
+
+	public static final String M3U = ".+\\.[mM]3[uU]";
+
+	public static final String M4A = ".+\\.[mM]4[aA]";
+
 	public static final String MP3 = ".+\\.[mM][pP]3";
-	
+
 	public static final String MP4 = ".+\\.[mM][pP]4";
 	
 	public static final String PDF = ".+\\.[pP][dD][fF]";

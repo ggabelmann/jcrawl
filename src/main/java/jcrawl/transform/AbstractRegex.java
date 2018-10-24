@@ -1,4 +1,4 @@
-package jcrawl;
+package jcrawl.transform;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -19,12 +19,9 @@ public abstract class AbstractRegex {
 	}
 	
 	/**
-	 * ?
-	 * 
-	 * @param string
 	 * @return A Matcher for the given String.
 	 */
-	protected Matcher getMatcher(final String string) {
+	protected Matcher getMatcherFor(final String string) {
 		return getPattern().matcher(string);
 	}
 	

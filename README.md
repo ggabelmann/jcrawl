@@ -1,13 +1,16 @@
 jcrawl
 ======
 
-At a high level jcrawl is a web crawler, written in java, which uses the Chain of Responsibility design pattern to control which URLs it visits and prints out. The chain is composed of Handlers which decide one-at-a-time whether or not they will handle the URL. If yes, then the handler can take some action, return a new list of URLs, or both. If no, then the next Handler has a chance to handle the URL.
+At a high level jcrawl is a web crawler, written in java, that tries to follow the principles of "functional core, imperative shell".
+(See https://www.destroyallsoftware.com/talks/boundaries for a great video about it.)
+That is, most objects are functional in nature (immutable and without side-effects) and I/O is kept in an imperative shell.
 
 Usage
 =====
 
-Currently, there is only one crawler: CrawlBootieMashup.java. It can be run directly from the commandline. It does not download anything; it only prints out URLs which are MP3s, PDFs, or ZIPs.
-
+Currently, there is only one crawler: CrawlBootieMashup.java.
+It can be run directly from the commandline.
+It does not download anything; it only prints out URLs which are likely to be music.
 HTTP requests are throttled by sleeping one second before sending the request.
 
 Future
