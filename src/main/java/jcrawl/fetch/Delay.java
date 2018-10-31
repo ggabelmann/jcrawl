@@ -1,41 +1,23 @@
 package jcrawl.fetch;
 
 /**
- * Sleeps a thread to provide crude throttling.
+ * An interface for immutable objects that can record events and can calculate delays so that the pace of events is good.
+ *
+ * Note: This class assumes events have zero width.
+ * They have no start and end time, no weight to them, etc.
  */
-public class Delay implements Runnable {
+public interface Delay {
 
-    private final long ms;
-    private long windowOpens;
+    /**
+     * @param time The time at which the event occured.
+     * @return A new EventsWindow with updates (based on where the window is).
+     */
+    Delay addEvent(long time);
 
-    public Delay() {
-        this(1000);
-    }
-
-    public Delay(final long intervalMilliSeconds) {
-        this.ms = intervalMilliSeconds;
-        this.windowOpens = System.currentTimeMillis();
-    }
-
-    public void run() {
-        final long now = System.currentTimeMillis();
-        final long delay = windowOpens - now + 1;
-
-        if (delay >= 1) {
-            try {
-                Thread.sleep(delay);
-                System.out.println(String.format("# slept for %d ms", delay));
-                windowOpens += ms;
-            }
-            catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        else {
-            windowOpens = now + ms;
-        }
-
-        return;
-    }
+    /**
+     *
+     * @return The number of milliseconds to delay.
+     */
+    long calculateDelay();
 
 }

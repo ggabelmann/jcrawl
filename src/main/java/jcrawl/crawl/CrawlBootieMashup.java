@@ -5,9 +5,7 @@ import jcrawl.core.Crawler;
 import jcrawl.core.Link;
 import jcrawl.core.PriorityTransformingQueue;
 import jcrawl.core.Queue;
-import jcrawl.fetch.Delay;
-import jcrawl.fetch.FetchDocument;
-import jcrawl.fetch.Select;
+import jcrawl.fetch.*;
 import jcrawl.transform.*;
 import jcrawl.utils.LinkMatchers;
 import jcrawl.utils.Regexes;
@@ -63,7 +61,7 @@ public class CrawlBootieMashup {
         };
 
         // The Function just fetches html documents and finds links inside pages.
-        final Function<Link, Set<Link>> fetchDocument = new FetchDocument(new Delay()).andThen(new Select("a", "href"));
+        final Function<Link, Set<Link>> fetchDocument = new FetchDocument(new EventsWindow(30, 60000)).andThen(new Select("a", "href"));
         final Function<Link, Set<Link>> fetcher = (link) -> {
             if (IS_FETCHABLE.test(link)) {
                 return fetchDocument.apply(link);
