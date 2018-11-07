@@ -12,7 +12,8 @@ import java.util.function.Function;
  * - A consumer that may do things by side-effect, like printing, save to a DB, etc.
  * - A function that usually does a network call to find more links.
  *
- * This class does not support multi-threading because I don't want to overwhelm the target site.
+ * This class does not support multi-threading.
+ * See {@link jcrawl.crawl.CrawlBootieMashup} for an alternative that does support multi-threading.
  */
 public class Crawler {
 
@@ -53,7 +54,7 @@ public class Crawler {
             try {
                 consumer.accept(link);
                 final Set<Link> newLinks = fetch.apply(link);
-                q = q.add(newLinks);
+                q = q.addAll(newLinks);
             }
             catch (final RuntimeException e) {
                 return Optional.of(new ThrowableDetails(link, e));

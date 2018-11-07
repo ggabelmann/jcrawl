@@ -1,4 +1,4 @@
-package jcrawl.fetch;
+package jcrawl.delay;
 
 /**
  * An interface for immutable objects that can record events and can calculate delays so that the pace of events is good.

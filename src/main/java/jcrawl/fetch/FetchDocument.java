@@ -13,39 +13,12 @@ import java.util.function.Function;
  */
 public class FetchDocument implements Function<Link, Document> {
 
-    private Delay delay;
-
-    public FetchDocument() {
-        this(new FixedDelay(0));
-    }
-
-    public FetchDocument(final Delay delay) {
-        this.delay = delay;
-    }
-
-    /**
-     * First executes an optional delay before fetching the given link.
-     */
     public Document apply(final Link link) {
-        final long delayAmount = delay.calculateDelay();
-
-        if (delayAmount > 0) {
-            try {
-                Thread.sleep(delayAmount);
-                System.out.println(String.format("# slept for %d ms", delayAmount));
-            }
-            catch (final InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
+        System.out.println(String.format("# Fetching %s", link));
 
         try {
-            final long start = System.currentTimeMillis();
-            delay = delay.addEvent(start);
-
-            System.out.println(String.format("# Fetching %s", link));
             final Document result = Jsoup.connect(link.getValue()).timeout(1000 * 30).userAgent("Mozilla/5.0 (Windows NT 6.1; WOW64; rv:15.0) Gecko/20100101 Firefox/15.0.1").get();
-            System.out.println(String.format("# Fetch took %d ms ", (System.currentTimeMillis() - start)));
+            //System.out.println(String.format("# Fetch took %d ms ", (System.currentTimeMillis() - start)));
             return result;
         }
         catch (final IOException ex1) {

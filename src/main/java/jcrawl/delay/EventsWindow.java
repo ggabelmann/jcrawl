@@ -1,5 +1,6 @@
-package jcrawl.fetch;
+package jcrawl.delay;
 
+import java.time.Duration;
 import java.util.*;
 import java.util.stream.LongStream;
 
@@ -16,10 +17,10 @@ public class EventsWindow implements Delay {
      * Constructor.
      *
      * @param count For example, 10 events.
-     * @param ms For example, 10000 milliseconds.
+     * @param window For example, 10 seconds.
      */
-    public EventsWindow(final int count, final int ms) {
-        this(new WindowDetails(count, ms), new long[0]);
+    public EventsWindow(final int count, final Duration window) {
+        this(new WindowDetails(count, window), new long[0]);
     }
 
     private EventsWindow(final WindowDetails windowDetails, final long[] events) {
@@ -68,7 +69,7 @@ public class EventsWindow implements Delay {
         int counter = 0;
 
         for (int i = 0; i < array.length; i++) {
-            if (array[i] <= windowEnd && array[i] >= windowEnd - windowDetails.getMs()) {
+            if (array[i] <= windowEnd && array[i] >= windowEnd - windowDetails.getWindow().toMillis()) {
                 counter++;
             }
         }
@@ -115,7 +116,7 @@ public class EventsWindow implements Delay {
         The window will slide past the 10th event in 10001 ms.
         Therefor, we should delay for (that futureTime - now) ms.
          */
-        final long futureTime = events[index] + getWindowDetails().getMs() + 1;
+        final long futureTime = events[index] + getWindowDetails().getWindow().toMillis() + 1;
         return futureTime - now;
     }
 
@@ -126,24 +127,24 @@ public class EventsWindow implements Delay {
     public static class WindowDetails {
 
         private final int count;
-        private final int ms;
-        private final int period;
+        private final Duration window;
+        private final Duration period;
 
-        WindowDetails(final int count, final int ms) {
+        WindowDetails(final int count, final Duration window) {
             this.count = count;
-            this.ms = ms;
-            this.period = ms / count;
+            this.window = window;
+            this.period = window.dividedBy(count);
         }
 
         public int getCount() {
             return count;
         }
 
-        public int getMs() {
-            return ms;
+        public Duration getWindow() {
+            return window;
         }
 
-        public int getPeriod() {
+        public Duration getPeriod() {
             return period;
         }
 

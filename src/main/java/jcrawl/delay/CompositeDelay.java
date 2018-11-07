@@ -1,4 +1,4 @@
-package jcrawl.fetch;
+package jcrawl.delay;
 
 /**
  * A class that uses the Composite design pattern to manage many Delay objects.
