@@ -4,10 +4,10 @@ import com.google.common.collect.ImmutableList;
 import jcrawl.core.Link;
 import jcrawl.core.PriorityTransformingQueue;
 import jcrawl.core.Queue;
-import jcrawl.delay.BlockingDelay;
-import jcrawl.delay.CompositeDelay;
-import jcrawl.delay.Delay;
-import jcrawl.delay.EventsWindow;
+import jcrawl.delay.BlockingWindow;
+import jcrawl.delay.CompositeWindow;
+import jcrawl.delay.Window;
+import jcrawl.delay.SlidingWindow;
 import jcrawl.fetch.*;
 import jcrawl.transform.*;
 import jcrawl.utils.LinkMatchers;
@@ -110,14 +110,17 @@ public class CrawlBootieMashup {
      * The Function just fetches html documents.
      */
     private Function<Link, Optional<Document>> getFetcher() {
-        final Delay delay = new BlockingDelay(new CompositeDelay(new EventsWindow(10, Duration.ofSeconds(5)), new EventsWindow(60, Duration.ofMinutes(1))));
+        final Window window = new BlockingWindow(new CompositeWindow(
+                new SlidingWindow(3, Duration.ofSeconds(1)),
+                new SlidingWindow(10, Duration.ofSeconds(5)),
+                new SlidingWindow(30, Duration.ofSeconds(30))));
         final Function<Link, Document> fetchDocument = new FetchDocument();
 
         return (link) -> {
             if (IS_FETCHABLE.test(link)) {
                 try {
-                    // In this case, don't need to reassign delay because DelayLock returns itself.
-                    delay.addEvent(System.currentTimeMillis());
+                    // In this case, don't need to reassign delay because BlockingDelay returns itself.
+                    window.addEvent(System.currentTimeMillis());
                     return Optional.of(fetchDocument.apply(link));
                 }
                 catch (final RuntimeException e) {

@@ -6,9 +6,9 @@ import java.util.stream.LongStream;
 
 /**
  * This class can record events and manage a sliding window over those events.
- * It can return estimates of how often work should be done to keep the window full.
+ * It can return estimates of when the next event should occur to keep the window full.
  */
-public class EventsWindow implements Delay {
+public class SlidingWindow implements Window {
 
     private final WindowDetails windowDetails;
     private final long[] events;
@@ -19,22 +19,28 @@ public class EventsWindow implements Delay {
      * @param count For example, 10 events.
      * @param window For example, 10 seconds.
      */
-    public EventsWindow(final int count, final Duration window) {
+    public SlidingWindow(final int count, final Duration window) {
         this(new WindowDetails(count, window), new long[0]);
     }
 
-    private EventsWindow(final WindowDetails windowDetails, final long[] events) {
+    private SlidingWindow(final WindowDetails windowDetails, final long[] events) {
         this.windowDetails = windowDetails;
         this.events = events;
     }
 
     /**
+     * First, inserts the given event into its sorted position.
+     * Second, truncates the events which are older than the window.
+     * This does not use the current time at all, only the events as they are.
+     *
+     * This does not block.
+     *
      * Note: not optimized.
      */
     @Override
-    public EventsWindow addEvent(final long time) {
+    public SlidingWindow addEvent(final long time) {
         if (events.length == 0) {
-            return new EventsWindow(windowDetails, new long[] {time});
+            return new SlidingWindow(windowDetails, new long[] {time});
         }
 
         final long[] newEvents = new long[events.length + 1];
@@ -46,7 +52,7 @@ public class EventsWindow implements Delay {
 
         final long[] truncated = new long[inWindow];
         System.arraycopy(newEvents, newEvents.length - truncated.length, truncated, 0, truncated.length);
-        return new EventsWindow(windowDetails, truncated);
+        return new SlidingWindow(windowDetails, truncated);
     }
 
     /**
@@ -80,8 +86,8 @@ public class EventsWindow implements Delay {
     /**
      * Note: not optimized.
      */
-    public EventsWindow merge(final EventsWindow other) {
-        EventsWindow next = this;
+    public SlidingWindow merge(final SlidingWindow other) {
+        SlidingWindow next = this;
 
         for (final long event : other.events) {
             next = next.addEvent(event);

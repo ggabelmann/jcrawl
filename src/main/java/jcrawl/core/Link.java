@@ -4,7 +4,7 @@ import java.util.Objects;
 
 /**
  * This class is analagous to an URL, but simpler.
- * This is better than just using Strings everwhere because a link is not text.
+ * This is better than just using Strings everywhere because a link is not text.
  */
 public class Link {
 

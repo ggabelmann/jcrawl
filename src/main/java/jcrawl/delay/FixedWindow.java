@@ -2,16 +2,19 @@ package jcrawl.delay;
 
 import java.time.Duration;
 
-public class FixedDelay implements Delay {
+/**
+ * A window that holds no events and returns a fixed delay.
+ */
+public class FixedWindow implements Window {
 
     private final Duration duration;
 
-    public FixedDelay(final Duration duration) {
+    public FixedWindow(final Duration duration) {
         this.duration = duration;
     }
 
     @Override
-    public Delay addEvent(long time) {
+    public Window addEvent(long time) {
         return this;
     }
 

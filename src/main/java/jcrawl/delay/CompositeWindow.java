@@ -1,25 +1,25 @@
 package jcrawl.delay;
 
 /**
- * A class that uses the Composite design pattern to manage many Delay objects.
+ * A class that uses the Composite design pattern to manage many Window objects.
  */
-public class CompositeDelay implements Delay {
+public class CompositeWindow implements Window {
 
-    private final Delay[] delays;
+    private final Window[] delays;
 
-    public CompositeDelay(final Delay... delays) {
+    public CompositeWindow(final Window... delays) {
         this.delays = delays;
     }
 
     @Override
-    public Delay addEvent(final long time) {
-        final Delay[] newDelays = new Delay[delays.length];
+    public Window addEvent(final long time) {
+        final Window[] newDelays = new Window[delays.length];
 
         for (int i = 0; i < delays.length; i++) {
             newDelays[i] = delays[i].addEvent(time);
         }
 
-        return new CompositeDelay(newDelays);
+        return new CompositeWindow(newDelays);
     }
 
     /**
@@ -29,7 +29,7 @@ public class CompositeDelay implements Delay {
     public long calculateDelay() {
         long max = 0;
 
-        for (final Delay di : delays) {
+        for (final Window di : delays) {
             max = Math.max(max, di.calculateDelay());
         }
 

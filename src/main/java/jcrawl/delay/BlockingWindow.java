@@ -4,29 +4,30 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * An implementation of Delay that uses an Lock to block Threads so that the desired 'load' is maintained.
+ * An implementation of Window that uses an Lock to block Threads so that the desired rate-limit is maintained.
  */
-public class BlockingDelay implements Delay {
+public class BlockingWindow implements Window {
 
-    private Delay delay;
+    private Window window;
     private final Lock lock;
 
-    public BlockingDelay(final Delay delay) {
-        this.delay = delay;
+    public BlockingWindow(final Window window) {
+        this.window = window;
         this.lock = new ReentrantLock();
     }
 
     /**
      * Grabs a lock before adding the given event, waiting if necessary.
-     * Does internal mutation and returns itself, not a new object.
+     * Does internal mutation and returns this object, not a new one.
+     * I did this because I don't know what happens if threads are blocked on the lock and then a new object is returned.
      */
     @Override
-    public Delay addEvent(final long time) {
+    public Window addEvent(final long time) {
         lock.lock();
         try {
             for (;;) {
                 final long delayAmount = calculateDelay();
-                if (delayAmount == 0) {
+                if (delayAmount <= 0) {
                     break;
                 }
                 else {
@@ -35,7 +36,7 @@ public class BlockingDelay implements Delay {
                 }
             }
 
-            delay = delay.addEvent(System.currentTimeMillis());
+            window = window.addEvent(System.currentTimeMillis());
         }
         catch (final InterruptedException e) {
             throw new RuntimeException(e);
@@ -52,7 +53,7 @@ public class BlockingDelay implements Delay {
      */
     @Override
     public long calculateDelay() {
-        return delay.calculateDelay();
+        return window.calculateDelay();
     }
 
 }
