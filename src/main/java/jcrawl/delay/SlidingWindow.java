@@ -123,7 +123,8 @@ public class SlidingWindow implements Window {
         Therefor, we should delay for (that futureTime - now) ms.
          */
         final long futureTime = events[index] + getWindowDetails().getWindow().toMillis() + 1;
-        return futureTime - now;
+        final long result = futureTime - now;
+        return result;
     }
 
 

@@ -36,7 +36,7 @@ public class BlockingWindow implements Window {
                 }
             }
 
-            window = window.addEvent(System.currentTimeMillis());
+            window = window.addEvent(time);
         }
         catch (final InterruptedException e) {
             throw new RuntimeException(e);

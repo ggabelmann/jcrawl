@@ -110,16 +110,13 @@ public class CrawlBootieMashup {
      * The Function just fetches html documents.
      */
     private Function<Link, Optional<Document>> getFetcher() {
-        final Window window = new BlockingWindow(new CompositeWindow(
-                new SlidingWindow(3, Duration.ofSeconds(1)),
-                new SlidingWindow(10, Duration.ofSeconds(5)),
-                new SlidingWindow(30, Duration.ofSeconds(30))));
+        final Window window = new BlockingWindow(new CompositeWindow(new SlidingWindow(1, Duration.ofSeconds(1))));
         final Function<Link, Document> fetchDocument = new FetchDocument();
 
         return (link) -> {
             if (IS_FETCHABLE.test(link)) {
                 try {
-                    // In this case, don't need to reassign delay because BlockingDelay returns itself.
+                    // In this case, don't need to reassign window because BlockingWindow returns itself.
                     window.addEvent(System.currentTimeMillis());
                     return Optional.of(fetchDocument.apply(link));
                 }
