@@ -19,4 +19,4 @@ It does not download anything; it only prints out URLs which are likely to be mu
 
 ## Public Service Announcement
 
-I'm looking for full-time and/or contract work! My Github Profile has more details on my skills, how I like to work, and my resume. Drop me a line and we can chat about working together.
+I'm looking for full-time and/or contract work! My [Github Profile](https://ggabelmann.github.com) has more details on my skills, how I like to work, and my resume. Drop me a line and we can chat about working together.
